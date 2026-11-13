@@ -55,10 +55,27 @@ input:focus,textarea:focus,select:focus,button:focus-visible{outline:3px solid v
 @keyframes hop{30%{transform:translateY(-70px) scale(1.4) rotate(-15deg)}60%{transform:translateY(0) scale(.9)}100%{transform:none}}
 .star{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;animation:tw 3s infinite}
 @keyframes tw{50%{opacity:.1}}
-#stage{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+#stage{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;pointer-events:none}
 #stage>*{pointer-events:auto}
 #title{margin-top:4vh;text-align:center;padding:0 14px;font-size:clamp(1.5rem,6vw,2.7rem);font-weight:700;line-height:1.12}
-#hint{margin-top:8px;font-size:1.15rem;opacity:.9;text-align:center;padding:0 12px}
+#hint{
+  position:relative;
+  z-index:5;
+  margin-top:12px;
+  max-width:min(92vw,680px);
+  padding:10px 20px;
+  border:2px solid #4a2c6b;
+  border-radius:14px;
+  background:rgba(255,255,255,.94);
+  color:#32164f;
+  box-shadow:0 4px 14px #24103b35;
+  font-size:clamp(1rem,2.8vw,1.25rem);
+  font-weight:700;
+  line-height:1.35;
+  opacity:1;
+  text-align:center;
+  text-shadow:none;
+}
 #field{position:absolute;inset:0;pointer-events:none;z-index:3}
 .sky{position:absolute;inset:0;pointer-events:auto;cursor:crosshair}
 .balloon{position:absolute;pointer-events:auto;cursor:pointer;border-radius:50% 50% 48% 48%;display:grid;place-items:center;color:#1b1030;font-weight:700;text-shadow:0 1px 0 #fff7;animation:rise 1.4s cubic-bezier(.2,.8,.3,1) backwards,sway var(--d) ease-in-out infinite alternate;box-shadow:inset -8px -10px 18px #0003,inset 6px 6px 12px #fff6}
@@ -402,9 +419,15 @@ const items=()=>{const a=data.age?Array.from({length:data.age},(_,i)=>i+1):Array
 
 /* 1 balloons */
 function balloons(){const it=items(),n=it.length,f=$('#field'),size=Math.max(48,Math.min(96,520/Math.sqrt(n))),bc=T.c.filter(x=>x!=='#ffffff');let left=n;
+  const cols=Math.min(n,Math.max(2,Math.floor(Math.min(innerWidth*.84,760)/(size+20))));
+  const rows=Math.ceil(n/cols),gap=size+20,rowStep=size*1.35;
+  const startY=Math.max(innerHeight*.35,(innerHeight-rows*rowStep)/2);
   const h=()=>hint((data.age?`Pop all ${n} balloons, one for every year!`:`Pop the balloons to spell ${data.to}!`)+` (${left} left)`);h();
-  it.forEach((t,i)=>{const b=document.createElement('div');b.className='balloon';
-    b.style.cssText=`width:${size}px;height:${size*1.2}px;left:${rnd(2,88)}%;top:${rnd(24,82)}%;font-size:${size*.38}px;--d:${rnd(2,4)}s;animation-delay:${i*.05}s,${-rnd(0,3)}s;background:${bc[i%bc.length]}`;
+  it.forEach((t,i)=>{const row=Math.floor(i/cols),col=i%cols;
+    const itemsInRow=Math.min(cols,n-row*cols),rowWidth=itemsInRow*size+(itemsInRow-1)*20;
+    const leftPos=(innerWidth-rowWidth)/2+col*gap;
+    const b=document.createElement('div');b.className='balloon';
+    b.style.cssText=`width:${size}px;height:${size*1.2}px;left:${leftPos}px;top:${startY+row*rowStep}px;font-size:${size*.38}px;--d:${rnd(2,4)}s;animation-delay:${i*.05}s,${-rnd(0,3)}s;background:${bc[i%bc.length]}`;
     b.textContent=t;
     b.onclick=()=>{if(b.classList.contains('pop'))return;const r=b.getBoundingClientRect();b.classList.add('pop');setTimeout(()=>b.remove(),200);
       burst(r.x+r.width/2,r.y+r.height/2,22,{max:6});bubble(r.x+r.width/2,r.y);pop(rnd(350,900));left--;h();
