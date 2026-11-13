@@ -419,15 +419,9 @@ const items=()=>{const a=data.age?Array.from({length:data.age},(_,i)=>i+1):Array
 
 /* 1 balloons */
 function balloons(){const it=items(),n=it.length,f=$('#field'),size=Math.max(48,Math.min(96,520/Math.sqrt(n))),bc=T.c.filter(x=>x!=='#ffffff');let left=n;
-  const cols=Math.min(n,Math.max(2,Math.floor(Math.min(innerWidth*.84,760)/(size+20))));
-  const rows=Math.ceil(n/cols),gap=size+20,rowStep=size*1.35;
-  const startY=Math.max(innerHeight*.35,(innerHeight-rows*rowStep)/2);
   const h=()=>hint((data.age?`Pop all ${n} balloons, one for every year!`:`Pop the balloons to spell ${data.to}!`)+` (${left} left)`);h();
-  it.forEach((t,i)=>{const row=Math.floor(i/cols),col=i%cols;
-    const itemsInRow=Math.min(cols,n-row*cols),rowWidth=itemsInRow*size+(itemsInRow-1)*20;
-    const leftPos=(innerWidth-rowWidth)/2+col*gap;
-    const b=document.createElement('div');b.className='balloon';
-    b.style.cssText=`width:${size}px;height:${size*1.2}px;left:${leftPos}px;top:${startY+row*rowStep}px;font-size:${size*.38}px;--d:${rnd(2,4)}s;animation-delay:${i*.05}s,${-rnd(0,3)}s;background:${bc[i%bc.length]}`;
+  it.forEach((t,i)=>{const b=document.createElement('div');b.className='balloon';
+    b.style.cssText=`width:${size}px;height:${size*1.2}px;left:${rnd(2,88)}%;top:${rnd(24,82)}%;font-size:${size*.38}px;--d:${rnd(2,4)}s;animation-delay:${i*.05}s,${-rnd(0,3)}s;background:${bc[i%bc.length]}`;
     b.textContent=t;
     b.onclick=()=>{if(b.classList.contains('pop'))return;const r=b.getBoundingClientRect();b.classList.add('pop');setTimeout(()=>b.remove(),200);
       burst(r.x+r.width/2,r.y+r.height/2,22,{max:6});bubble(r.x+r.width/2,r.y);pop(rnd(350,900));left--;h();
@@ -510,7 +504,7 @@ function reveal(){show();$('#reveal').classList.remove('hide');
 /* ================= EDIT THIS: your own info (shown in the footer and on the final card) ================= */
 const ME={
   name:'R. Arun Kumar',
-  role:'Software Developer',
+  role:'Software Developer · UI Designer',
   about:'Hi! I love building fun little websites like this one. Let’s work together!',
   links:[['LinkedIn','https://www.linkedin.com/in/arun-kumar-r-b6228b291/']],
   email:'rakumar1712005@gmail.com',
